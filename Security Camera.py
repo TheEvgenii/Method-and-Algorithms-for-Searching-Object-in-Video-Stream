@@ -5,6 +5,10 @@ import datetime
 #Access webcam 
 cap = cv2.VideoCapture(0)
 
+# Getting values for width and height
+print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+print(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 body_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_fullbody.xml")
 
@@ -62,6 +66,19 @@ while True:
     # Draw rectangle on the screen for bodies
     for (x, y, width, height) in bodies:
         cv2.rectangle(frame, (x,y), (x + width, y + height), (255, 0, 0), 3)
+
+    # Draw image size
+    font = cv2.FONT_ITALIC
+    text = '('+ str(cap.get(3)) + ' X ' + str(cap.get(4)) + ')'
+    frame = cv2.putText(frame, text, (10, 50), font, 1, (231, 230, 229), 2, cv2.LINE_AA)
+
+    # Draw real time and date
+    font = cv2.FONT_ITALIC
+    text = '('+ str(cap.get(3)) + ' X ' + str(cap.get(4)) + ')'
+    datet = str(datetime.datetime.now())
+    frame = cv2.putText(frame, datet, (10, 100), font, 1, (231, 230, 229), 2, cv2.LINE_AA)
+
+
 
     cv2.imshow("Camera", frame)
 
