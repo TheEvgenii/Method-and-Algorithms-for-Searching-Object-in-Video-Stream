@@ -1,9 +1,18 @@
 import cv2
 import time
 import datetime
+import os
+import smtplib    # email sender
 
-#Access webcam 
+# Get email addres and password from invirement vairable
+EMAIL_USER = os.environ.get('EMAIL_ADDRESS')
+EMAIL_PASS = os.environ.get('EMAIL_PASSWORD')
+
+# Access webcam 
 cap = cv2.VideoCapture(0)
+
+cap.set(3, 640) # set width as 640
+cap.set(4, 480) # set height as 480
 
 # Getting values for width and height
 print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -12,6 +21,19 @@ print(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 # Using Haar Classifiers for face and body detection with CUDA
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 body_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_fullbody.xml")
+
+with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+    smtp.ehlo()
+    smtp.starttls()
+    smtp.ehlo()
+
+    smtp.login(EMAIL_USER, EMAIL_PASS)
+
+    subject = 'Object detected!'
+    body = 'Object is ...'
+    msg = f'Subject: {subject} \n\n{body}'
+    smtp.sendmail(EMAIL_USER, 'alanmatt2000@gmail.com', msg)
+
 
 recodring = False
 detection_stopped_time = None
