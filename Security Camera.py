@@ -18,8 +18,6 @@ def sendemail():
         msg = f'Subject: {subject} \n\n{body}'
         smtp.sendmail(EMAIL_USER, 'alanmatt2000@gmail.com', msg)
 
-
-
 # Get email addres and password from invirement vairable
 EMAIL_USER = os.environ.get('EMAIL_ADDRESS')
 EMAIL_PASS = os.environ.get('EMAIL_PASSWORD')
@@ -34,8 +32,25 @@ print("Frames per second camera: {0}".format(fps))
 # Number of frames to capture
 num_frames = 1
 
-cap.set(3, 640) # set width as 640
-cap.set(4, 480) # set height as 480
+# change resolution
+
+def make_1080p():
+    cap.set(3, 1920)
+    cap.set(4, 1080)
+
+def make_720p():
+    cap.set(3, 1280)
+    cap.set(4, 720)
+
+def make_480p():
+    cap.set(3, 640)
+    cap.set(4, 480)
+
+def change_res(width, height):
+    cap.set(3, width)
+    cap.set(4, height)
+
+make_480p()  # set width as 640 and set height as 480
 
 # Getting values for width and height
 print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -44,7 +59,6 @@ print(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 # Using Haar Classifiers for face and body detection with CUDA
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 body_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_fullbody.xml")
-
 
 recodring = False
 detection_stopped_time = None
@@ -92,6 +106,9 @@ while True:
     bodies = body_cascade.detectMultiScale(gray, 1.3, 5)
 
     if len(faces) + len(bodies) > 0:
+        make_720p() # Change resolution to a hire quallity
+        # Taking frame new frame size
+        frame_size = (int(cap.get(3)), int(cap.get(4)))
         if recodring:
             timer_started = False
         else:
@@ -110,6 +127,7 @@ while True:
                 timer_started = False
                 out.release()
                 print('Stop Recording!')
+                make_480p() # Change resolution to a lower quallity
         else:
             timer_started = True
             detection_stopped_time = time.time()
@@ -133,9 +151,6 @@ while True:
     
     # Calculate frames per second
     fps = num_frames / seconds
-
-    
-
 
     cv2.imshow("Camera", frame)
 
