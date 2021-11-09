@@ -2,21 +2,36 @@ import cv2
 import time
 import datetime
 import os
-import smtplib    # email sender
+import smtplib    # Sends email
+import imghdr
+from email.message import EmailMessage
 
 # Sends an email 
 def sendemail():
-    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
-        smtp.ehlo()
-        smtp.starttls()
-        smtp.ehlo()
+    msg = EmailMessage()
+    msg['Subject'] = 'Object was detected!'
+    msg['From'] = EMAIL_USER
+    msg['To'] = 'alanmatt2000@gmail.com'
+    msg.set_content('Object has been recorded. Image attached: ')
 
+    # Send a capture of the image from ditected object
+    with open('Object_detected_0.png', 'rb') as f:
+        file_data = f.read()
+        file_type = imghdr.what(f.name)
+        file_name = f.name
+
+    msg.add_attachment(file_data, maintype='image', subtype=file_type,filename=file_name)
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(EMAIL_USER, EMAIL_PASS)
+        smtp.send_message(msg)
 
-        subject = 'Object is detected!'
-        body = 'Object is on been recorded'
-        msg = f'Subject: {subject} \n\n{body}'
-        smtp.sendmail(EMAIL_USER, 'alanmatt2000@gmail.com', msg)
+def captureImage(IMG_COUNTER = 0):
+    img_name = "Object_detected_{}.png".format(IMG_COUNTER)
+    cv2.imwrite(img_name,frame)
+    print("Screenshot taken")
+    IMG_COUNTER+=1
+
 
 # Get email addres and password from invirement vairable
 EMAIL_USER = os.environ.get('EMAIL_ADDRESS')
@@ -103,7 +118,7 @@ while True:
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
     # List of all of the bodies positions that exist
-    bodies = body_cascade.detectMultiScale(gray, 1.3, 5)
+    bodies = body_cascade.detectMultiScale(gray, 1.1, 1)
 
     if len(faces) + len(bodies) > 0:
         make_720p() # Change resolution to a hire quallity
@@ -117,8 +132,10 @@ while True:
             current_time = datetime.datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
             out = cv2.VideoWriter(
                 f"{current_time}.mp4", fourcc, 20, frame_size)
+            captureImage()
             sendemail()                            # Sends an email after detecting an object
             print("Started Recording!")
+            
     elif recodring:
         if timer_started:
             # If current time passed value after detection
@@ -141,7 +158,7 @@ while True:
 
     # Draw rectangle on the screen for bodies
     for (x, y, width, height) in bodies:
-        cv2.rectangle(frame, (x,y), (x + width, y + height), (255, 0, 0), 3)
+        cv2.rectangle(frame, (x,y), (x + width, y + height), (255, 0, 0), 2)
 
     # End time for whole program running 120 frames
     end = time.time()
