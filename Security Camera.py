@@ -32,7 +32,6 @@ def captureImage(IMG_COUNTER = 0):
     print("Screenshot taken")
     IMG_COUNTER+=1
 
-
 # Get email addres and password from invirement vairable
 EMAIL_USER = os.environ.get('EMAIL_ADDRESS')
 EMAIL_PASS = os.environ.get('EMAIL_PASSWORD')

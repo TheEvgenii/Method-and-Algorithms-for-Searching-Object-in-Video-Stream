@@ -1,39 +1,39 @@
 import cv2
 import numpy as np
 
+# load a video
+cap = cv2.VideoCapture('carsvid.mp4')
 
-class ObjectDetection:
-    def __init__(self, weights_path="dnn_model/yolov4.weights", cfg_path="dnn_model/yolov4.cfg"):
-        print("Loading Object Detection")
-        print("Running opencv dnn with YOLOv4")
-        self.nmsThreshold = 0.4
-        self.confThreshold = 0.5
-        self.image_size = 608
+# You can set custom kernel size if you want.
+kernel = None
 
-        # Load Network
-        net = cv2.dnn.readNet(weights_path, cfg_path)
+# you can optionally work on the live web cam
+#cap = cv2.VideoCapture(0)
 
-        # Enable GPU CUDA
-        net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
-        net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
-        self.model = cv2.dnn_DetectionModel(net)
+# create the background object, you can choose to detect shadows or not (if True they will be shown as gray)
+backgroundobject = cv2.createBackgroundSubtractorMOG2( history = 2, detectShadows = True )
 
-        self.classes = []
-        self.load_class_names()
-        self.colors = np.random.uniform(0, 255, size=(80, 3))
+while(1):
+    ret, frame = cap.read()  
+    if not ret:
+        break
+        
+    # apply the background object on each frame
+    fgmask = backgroundobject.apply(frame)
 
-        self.model.setInputParams(size=(self.image_size, self.image_size), scale=1/255)
-
-    def load_class_names(self, classes_path="dnn_model/classes.txt"):
-
-        with open(classes_path, "r") as file_object:
-            for class_name in file_object.readlines():
-                class_name = class_name.strip()
-                self.classes.append(class_name)
-
-        self.colors = np.random.uniform(0, 255, size=(80, 3))
-        return self.classes
-
-    def detect(self, frame):
-        return self.model.detect(frame, nmsThreshold=self.nmsThreshold, confThreshold=self.confThreshold)
-
+    # also extracting the real detected foreground part of the image (optional)
+    real_part = cv2.bitwise_and(frame,frame,mask=fgmask)
+    
+    # making fgmask 3 channeled so it can be stacked with others
+    fgmask_3 = cv2.cvtColor(fgmask, cv2.COLOR_GRAY2BGR)
+    
+    # Stack all three frames and show the image
+    stacked = np.hstack((fgmask_3,frame,real_part))
+    cv2.imshow('All three',cv2.resize(stacked,None,fx=0.65,fy=0.65))
+ 
+    k = cv2.waitKey(30) &  0xff
+    if k == 27:
+        break
+   
+cap.release()
+cv2.destroyAllWindows()
