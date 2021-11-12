@@ -1,12 +1,51 @@
 import cv2
 import numpy as np
 
+video = cv2.VideoCapture(0)
+video1 = cv2.VideoCapture(1)
+
+
+while True:
+    
+    # Read a new frame.
+    ret, frame = video.read()
+    ret, frame1 = video1.read()
+
+    # Check if frame is not read correctly.
+    if not ret:
+        
+        # Break the loop.
+
+        break
+
+    cv2.imshow("Camera", frame)
+    cv2.imshow("Camera1", frame1)
+
+    # Wait until a key is pressed.
+    # Retreive the ASCII code of the key pressed
+    k = cv2.waitKey(1) & 0xff
+    
+    # Check if 'q' key is pressed.
+    if k == ord('q'):
+        
+        # Break the loop.
+        break
+
+# Release the VideoCapture Object.
+video.release()
+video1.release()
+
+# Close the windows.q
+cv2.destroyAllWindows()
+
+
+
 # load a video
 #video = cv2.VideoCapture('carsvid.mp4')
 
 # You can set custom kernel size if you want.
 kernel = None
-video = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 # Initialize the background object.
 backgroundObject = cv2.createBackgroundSubtractorMOG2(detectShadows = True)
@@ -14,7 +53,7 @@ backgroundObject = cv2.createBackgroundSubtractorMOG2(detectShadows = True)
 while True:
     
     # Read a new frame.
-    ret, frame = video.read()
+    ret, frame = cap.read()
 
     # Check if frame is not read correctly.
     if not ret:
@@ -64,9 +103,9 @@ while True:
 
     # Display the stacked image with an appropriate title.
     cv2.imshow('Original Frame, Extracted Foreground and Detected Cars', cv2.resize(stacked, None, fx=0.5, fy=0.5))
-    cv2.imshow('initial Mask', initialMask)
-    cv2.imshow('Noisy Mask', noisymask)
-    cv2.imshow('Clean Mask', fgmask)
+    #cv2.imshow('initial Mask', initialMask)
+    #cv2.imshow('Noisy Mask', noisymask)
+    #cv2.imshow('Clean Mask', fgmask)
 
 
     # Wait until a key is pressed.
@@ -80,7 +119,7 @@ while True:
         break
 
 # Release the VideoCapture Object.
-video.release()
+cap.release()
 
 # Close the windows.q
 cv2.destroyAllWindows()

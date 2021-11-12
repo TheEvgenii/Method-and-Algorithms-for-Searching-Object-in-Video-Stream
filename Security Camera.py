@@ -39,13 +39,14 @@ EMAIL_PASS = os.environ.get('EMAIL_PASSWORD')
 # Access webcam 
 cap = cv2.VideoCapture(0)
 
+
 # Fps count
 fps = cap.get(cv2.CAP_PROP_FPS)
 print("Frames per second camera: {0}".format(fps))
 
 # Number of frames to capture
 num_frames = 1
-
+  
 # change resolution
 
 def make_1080p():
