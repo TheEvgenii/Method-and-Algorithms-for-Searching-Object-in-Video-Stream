@@ -64,9 +64,9 @@ while True:
 
     # Display the stacked image with an appropriate title.
     cv2.imshow('Original Frame, Extracted Foreground and Detected Cars', cv2.resize(stacked, None, fx=0.5, fy=0.5))
-    cv2.imshow('initial Mask', initialMask)
-    cv2.imshow('Noisy Mask', noisymask)
-    cv2.imshow('Clean Mask', fgmask)
+    #cv2.imshow('initial Mask', initialMask)
+    #cv2.imshow('Noisy Mask', noisymask)
+    #cv2.imshow('Clean Mask', fgmask)
 
 
     # Wait until a key is pressed.

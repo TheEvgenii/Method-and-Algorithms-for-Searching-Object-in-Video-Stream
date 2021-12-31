@@ -14,7 +14,7 @@ def sendemail():
     msg['To'] = 'alanmatt2000@gmail.com'
     msg.set_content('Object has been recorded. Image attached: ')
 
-    # Send a capture of the image from ditected object
+    # Send a capture of the image from ditected objectв
     with open('Object_detected_0.png', 'rb') as f:
         file_data = f.read()
         file_type = imghdr.what(f.name)
