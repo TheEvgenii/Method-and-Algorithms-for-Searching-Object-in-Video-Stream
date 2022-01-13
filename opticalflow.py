@@ -63,7 +63,7 @@ while True:
     prevgray = gray
 
 
-    # End time
+    # End timee
     end = time.time()
     # calculate the FPS for current frame detection
     fps = 1 / (end-start)
