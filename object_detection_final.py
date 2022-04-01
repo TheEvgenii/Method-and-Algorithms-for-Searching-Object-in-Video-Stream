@@ -45,7 +45,7 @@ while True:
     for cnt in contours:
         
         # Make sure the contour area is somewhat higher than some threshold to make sure its a car and not some noise.
-        if cv2.contourArea(cnt) > 200:
+        if cv2.contourArea(cnt) > 5000:
             
             # Retrieve the bounding box coordinates from the contour.
             x, y, width, height = cv2.boundingRect(cnt)
