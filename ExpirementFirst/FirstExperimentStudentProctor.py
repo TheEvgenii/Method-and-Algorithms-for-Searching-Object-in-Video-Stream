@@ -148,7 +148,7 @@ while(1):
                         outRight = cv2.VideoWriter(
                             f"RightCamera_{current_time2}.mp4", fourcc, 20, frame_size)
 
-                        if screenshot == 1 and x> 570 and y > 160:
+                        if screenshot <= 2 and x> 570 and y > 160:
                             captureImage()
                             screenshot += 1
                             sendemail()                            # Sends an email after detecting an object
