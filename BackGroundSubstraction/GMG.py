@@ -1,3 +1,11 @@
+#  GMG.py
+#  Evgenii_Litvinov
+#  COSC4399
+#  Code was written in Python language
+#  Created by Evgenii Litvinov on 12/02/21.
+#  Reference: https://bleedai.com/jupyter_notebook/Vehicle_Detection.html
+#
+
 import numpy as np
 import cv2
 
@@ -15,7 +23,7 @@ while(1):
   	# Detect contours in the frame.
     contours, _ = cv2.findContours(fgmask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
-    # Create a copy of the frame to draw bounding boxes around the detected cars.
+    # Create a copy of the frame to draw bounding boxes around the detected objects.
     frameCopy = frame.copy()
     
     # loop over each contour found in the frame.
@@ -27,10 +35,10 @@ while(1):
             # Retrieve the bounding box coordinates from the contour.
             x, y, width, height = cv2.boundingRect(cnt)
             
-            # Draw a bounding box around the car.
+            # Draw a bounding box around the object.
             cv2.rectangle(frameCopy, (x , y), (x + width, y + height),(0, 0, 255), 2)
             
-            # Write Car Detected near the bounding box drawn.
+            # Write Object Detected near the bounding box drawn.
             cv2.putText(frameCopy, 'Object detected', (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0,255,0), 1, cv2.LINE_AA)
 
     cv2.imshow('frameCopy GMG',frameCopy)
