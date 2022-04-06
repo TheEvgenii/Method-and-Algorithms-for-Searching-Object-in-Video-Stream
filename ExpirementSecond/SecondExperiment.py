@@ -1,3 +1,11 @@
+#
+#  SecondExperiment.py
+#  Evgenii_Litvinov
+#  COSC4399
+#  Code was written in Python language
+#  Created by Evgenii Litvinov on 02/15/22.
+#
+
 import numpy as np
 import cv2
 import time
@@ -47,8 +55,8 @@ if cap is None:
 if cap1 is None:
     print("No second File")
 
-fgbg = cv2.createBackgroundSubtractorMOG2()
-fgbg1 = cv2.createBackgroundSubtractorMOG2()
+fgbg = cv2.createBackgroundSubtractorMOG2(detectShadows = False)
+fgbg1 = cv2.createBackgroundSubtractorMOG2(detectShadows = False)
 
 # Fps count
 fps = cap.get(cv2.CAP_PROP_FPS)
@@ -106,14 +114,14 @@ while(1):
     contours, _ = cv2.findContours(fgmask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours1, _ = cv2.findContours(fgmask1, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
-    # Create a copy of the frame to draw bounding boxes around the detected cars.
+    # Create a copy of the frame to draw bounding boxes around the detected objects.
     frameCopy = frame.copy()
     frameCopy1 = frame1.copy()
     
     # loop over each contour found in the frame.
     for cnt in contours:
         
-        # Make sure the contour area is somewhat higher than some threshold to make sure its a car and not some noise.
+        # Make sure the contour area is somewhat higher than some threshold to make sure its a object and not some noise.
         if cv2.contourArea(cnt) > 4500:
 
             # Taking frame new frame size
@@ -147,10 +155,10 @@ while(1):
             # Retrieve the bounding box coordinates from the contour.
             x, y, width, height = cv2.boundingRect(cnt)
             
-            # Draw a bounding box around the car.
+            # Draw a bounding box around the object.
             cv2.rectangle(frameCopy, (x , y), (x + width, y + height),(0, 0, 255), 2)
                 
-            # Write Car Detected near the bounding box drawn.
+            # Write object Detected near the bounding box drawn.
             cv2.putText(frameCopy, 'Object detected', (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0,255,0), 1, cv2.LINE_AA)
 
         elif recodringRight:
@@ -177,7 +185,7 @@ while(1):
 
     for cnt1 in contours1:
         
-        # Make sure the contour area is somewhat higher than some threshold to make sure its a car and not some noise.
+        # Make sure the contour area is somewhat higher than some threshold to make sure its a object and not some noise.
         if cv2.contourArea(cnt1) > 4500:
 
             # Taking frame new frame size
@@ -212,10 +220,10 @@ while(1):
             x, y, width, height = cv2.boundingRect(cnt1)
             
 
-            # Draw a bounding box around the car.
+            # Draw a bounding box around the object.
             cv2.rectangle(frameCopy1, (x , y), (x + width, y + height),(0, 0, 255), 2)
                 
-            # Write Car Detected near the bounding box drawn.
+            # Write object Detected near the bounding box drawn.
             cv2.putText(frameCopy1, 'Objects detected', (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0,255,0), 1, cv2.LINE_AA)
 
         elif recodringMidle:
@@ -251,8 +259,15 @@ while(1):
         # Calculate frames per second
         fps = num_frames / seconds
 
-    cv2.imshow('RightCamera',frameCopy)
-    cv2.imshow('MiddleCamera',frameCopy1)
+
+    # making fgmask 3d so it can be stacked with others
+    fgmask_2 = cv2.cvtColor(fgmask, cv2.COLOR_GRAY2BGR)    
+
+    # Stack the original framen and extracted foreground. 
+    stacked = np.hstack((frameCopy, frameCopy1,fgmask_2))       
+    cv2.imshow(' RightCamera & MiddleCamera & fgmask', cv2.resize(stacked, None, fx=1, fy=1))
+    #cv2.imshow('RightCamera',frameCopy)
+    #cv2.imshow('MiddleCamera',frameCopy1)
     #cv2.imshow('fgmask MOG2',fgmask)
     k = cv2.waitKey(30) & 0xff
     if k == 27:

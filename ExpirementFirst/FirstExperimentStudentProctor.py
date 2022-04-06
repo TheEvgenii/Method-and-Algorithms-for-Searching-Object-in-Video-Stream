@@ -1,3 +1,11 @@
+#
+#  FirstExerimentStudentProctor.py
+#  Evgenii_Litvinov
+#  COSC4399
+#  Code was written in Python language
+#  Created by Evgenii Litvinov on 01/25/22.
+#
+
 
 import numpy as np
 import cv2
@@ -118,7 +126,7 @@ while(1):
     # loop over each contour found in the frame.
     for cnt in contours:
         
-        # Make sure the contour area is somewhat higher than some threshold to make sure its a car and not some noise.
+        # Make sure the contour area is somewhat higher than some threshold to make sure its a object and not some noise.
         if cv2.contourArea(cnt) > 500:
             
             # Retrieve the bounding box coordinates from the contour.
@@ -157,10 +165,10 @@ while(1):
 
 
 
-                    # Draw a bounding box around the car.
+                    # Draw a bounding box around the object.
                     cv2.rectangle(frameCopy, (x , y), (x + width, y + height),(0, 0, 255), 2)
                     
-                    # Write Car Detected near the bounding box drawn.
+                    # Write object Detected near the bounding box drawn.
                     cv2.putText(frameCopy, 'Object detected', (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0,255,0), 1, cv2.LINE_AA)
             
 
@@ -190,7 +198,7 @@ while(1):
 
     for cnt1 in contours1:
         
-        # Make sure the contour area is somewhat higher than some threshold to make sure its a car and not some noise.
+        # Make sure the contour area is somewhat higher than some threshold to make sure its a object and not some noise.
         if cv2.contourArea(cnt1) > 500:
             
             # Retrieve the bounding box coordinates from the contour.
@@ -234,7 +242,7 @@ while(1):
 
 
 
-                    # Draw a bounding box around the car.
+                    # Draw a bounding box around the object.
                     cv2.rectangle(frameCopy1, (x , y), (x + width, y + height),(0, 0, 255), 2)
                     
                     # Write Car Detected near the bounding box drawn.
@@ -271,8 +279,15 @@ while(1):
         # Calculate frames per second
         fps = num_frames / seconds
 
-    cv2.imshow('LeftCamera',frameCopy)
-    cv2.imshow('RightCamera',frameCopy1)
+    # making fgmask 3d so it can be stacked with others
+    fgmask_2 = cv2.cvtColor(fgmask, cv2.COLOR_GRAY2BGR)    
+
+    # Stack the original framen and extracted foreground. 
+    stacked = np.hstack((frameCopy, frameCopy1,fgmask_2))       
+    cv2.imshow('LeftCamera & RightCamera & fgmask', cv2.resize(stacked, None, fx=1, fy=1))
+
+    #cv2.imshow('LeftCamera',frameCopy)
+    #cv2.imshow('RightCamera',frameCopy1)
     #cv2.imshow('fgmask MOG2',fgmask)
     k = cv2.waitKey(30) & 0xff
     if k == 27:
